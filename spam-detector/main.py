@@ -7,8 +7,8 @@ import string
 from nltk.stem.porter import PorterStemmer
 
 # Download required resources once
-nltk.download('punkt', quiet=True)
-nltk.download('stopwords', quiet=True)
+nltk.download('punkt')
+nltk.download('stopwords')
 
 ps = PorterStemmer()
 stop_words = set(stopwords.words('english'))
