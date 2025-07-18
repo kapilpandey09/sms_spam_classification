@@ -72,8 +72,8 @@ def transform_text(text):
 # Inject custom CSS for text input
 
 
-tfidf = pickle.load(open('vectorizer.pkl', 'rb'))
-model = pickle.load(open('model.pkl', 'rb'))
+tfidf = pickle.load(open('./spam-detector/vectorizer.pkl', 'rb'))
+model = pickle.load(open('./spam-detector/model.pkl', 'rb'))
 
 st.title("Email/SMS Spam Classifier")
 
