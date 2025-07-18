@@ -44,71 +44,28 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-
 def transform_text(text):
+    import string
+    import re
+
     text = text.lower()
-    text = word_tokenize(text)
+    text = nltk.word_tokenize(text)
     y = []
-    for i in text:
-        if i.isalnum():
-            y.append(i)
-    text = y[:]
-    y.clear()
-
-    for i in text:
-        if i not in stop_words and i not in string.punctuation:
-            y.append(i)
-    
-    text = y[:]
-    y.clear()
-
-    for i in text:
-        y.append(ps.stem(i))
-            
+    for word in text:
+        if word.isalnum() and word not in stopwords.words('english') and word not in string.punctuation:
+            y.append(ps.stem(word))
     return " ".join(y)
 
+# Streamlit UI
+st.title("Spam Classifier")
 
-# import model 
-# Inject custom CSS for text input
+input_sms = st.text_area("Enter the message")
 
-
-tfidf = pickle.load(open('./spam-detector/vectorizer.pkl', 'rb'))
-model = pickle.load(open('./spam-detector/model.pkl', 'rb'))
-
-st.title("Email/SMS Spam Classifier")
-
-
-st.markdown("""
-    <style>
-    div.stButton > button:first-child {
-        background-color: black;
-        color: white;
-        border: 1px solid white;
-        padding: 0.5em 2em;
-        border-radius: 8px;
-        font-weight: bold;
-        font-size: 16px;
-        transition: 0.3s;
-    }
-
-    div.stButton > button:first-child:hover {
-        background-color: #333;
-        color: yellow;
-        border-color: yellow;
-    }
-    </style>
-""", unsafe_allow_html=True)
-
-input_sms = st.text_input("Enter your message:")
-
-
-
-if st.button('🚀 Predict'):
-    transformed_sms = transform_text(input_sms)
-    vector_input = tfidf.transform([transformed_sms])
+if st.button('Predict'):
+    transformed = transform_text(input_sms)
+    vector_input = cv.transform([transformed])
     result = model.predict(vector_input)[0]
-
     if result == 1:
-        st.markdown('<h2 style="color:red;">🚫 Spam</h2>', unsafe_allow_html=True)
+        st.error("This is a SPAM message!")
     else:
-        st.markdown('<h2 style="color:lightgreen;">✅ Not Spam</h2>', unsafe_allow_html=True)
+        st.success("This is NOT a spam message.")
